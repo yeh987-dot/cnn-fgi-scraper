@@ -1,0 +1,31 @@
+name: Hourly Fear & Greed Index Scraper
+
+on:
+  schedule:
+    # Cron 表達式：分 時 日 月 週
+    # "0 * * * *" 代表每小時的第 0 分鐘執行一次
+    - cron: '0 * * * *'
+  workflow_dispatch: # 讓你也可以手動點擊按鈕測試執行
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Scraper
+        env:
+          # 如果你有設定 Discord/Telegram 通知，請在 GitHub Settings -> Secrets 中設定變數
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python main.py
